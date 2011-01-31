@@ -1,0 +1,87 @@
+########################################################################
+# EasyForetell, The Predictive Cache for Advanced Web Applications.    #
+#                                                                      #
+# Copyright (C) 2010 - 2011 Erik Torres Serrano                        #
+#                                                                      #
+# If you need assistance with this program, you may contact:           #
+#                                                                      #
+# http://softactiva.com or email etorres@softactiva.com.               #
+#                                                                      #
+# This file is part of EasyForetell.                                   #
+#                                                                      #
+# EasyForetell is free software: you can redistribute it and/or modify #
+# it under the terms of the GNU General Public License as published by #
+# the Free Software Foundation, either version 3 of the License, or    #
+# (at your option) any later version.                                  #
+#                                                                      #
+# EasyForetell is distributed in the hope that it will be useful,      #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of       #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         #
+# GNU General Public License for more details.                         #
+#                                                                      #
+# You should have received a copy of the GNU General Public License    #
+# along with EasyForetell. If not, see <http://www.gnu.org/licenses/>. #
+########################################################################
+
+EasyForetell provides Predictive Cache for Web Applications that have special
+requirements of security, performance or availability. In order to use
+EasyForetell your system must meet the minimum requirements below.
+
+1) Requirements:
+
+  - libev: libev3, libev-dev
+  - libcurl: libcurl3, libcurl3-gnutls, libcurl4-gnutls-dev
+  - libconfig: libconfig8, libconfig8-dev
+  - libmemcached: libmemcached2, libmemcached-dev
+
+To check whether these files already exist on your system use:
+
+  user@host:~$ ldd /path_to_binary_installation/queral
+
+2) Installation:
+
+Create a new user for EasyForetell. For example, in Debian based distributions
+you can use:
+
+  user@host:~$ adduser --system --group --disabled-password --disabled-login \
+  --no-create-home queral
+
+Optionally, delete the home of the user queral.
+
+  user@host:~$ rm -rf /home/queral/
+
+Create the directories for EasyForetell:
+
+  user@host:~$ mkdir -p /usr/local/sw/queral/bin/
+  user@host:~$ mkdir -p /usr/local/sw/queral/etc/
+  user@host:~$ mkdir -p /usr/local/sw/queral/var/run/
+
+Apply permissions to folders:
+
+  user@host:~$ chown -R queral:queral /usr/local/sw/queral/
+
+Copy the init scripts and configure EasyForetell to start on boot time:
+
+  user@host:~$ cp /path_to_installer/etc/queral /etc/init.d/queral
+  user@host:~$ update-rc.d -n queral defaults
+  user@host:~$ update-rc.d queral defaults
+
+Add users to the group queral. Users in this group can use the Unix domain
+socket at '/usr/local/sw/queral/var/run/queral.fifo' to send commands in the
+cache languaje to EasyForetell:
+
+  user@host:~$ usermod -a -G queral muxo
+  user@host:~$ usermod -a -G queral www-data
+  user@host:~$ tail /etc/group
+  ...
+  user@host:~$ queral:x:113:muxo,www-data
+
+3) Testing the installation:
+
+  user@host:~$ clear ; sudo service queral restart ; \
+  tail -f /var/log/daemon.log
+
+  user@host:~$ clear ; sudo service queral stop ; tail /var/log/daemon.log
+
+  user@host:~$ clear ; cd /path_to_installer/ ; \
+  sudo -u queral sh /path_to_installer/test2.sh
